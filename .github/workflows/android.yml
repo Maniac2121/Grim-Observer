@@ -1,0 +1,120 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      GODOT_VERSION: 4.6.3
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools
+        run: sdkmanager 'platform-tools' 'build-tools;35.0.1' 'platforms;android-35'
+
+      - name: Install Godot and Android export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable"
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 600 "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip" -o "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot-bin"
+          chmod +x "$RUNNER_TEMP/godot-bin/Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+          sudo ln -s "$RUNNER_TEMP/godot-bin/Godot_v${GODOT_VERSION}-stable_linux.x86_64" /usr/local/bin/godot
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 900 "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" -o "$RUNNER_TEMP/templates.tpz"
+          template_dir="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$template_dir"
+          unzip -j -q "$RUNNER_TEMP/templates.tpz" templates/android_release.apk templates/android_debug.apk -d "$template_dir"
+          godot --version
+
+      - name: Test battle simulation
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          godot --headless --editor --import --quit 2>&1 | tee dist/import.log
+          timeout 180 godot --headless --path . -- --smoke 2>&1 | tee dist/smoke.log
+          grep -q SMOKE_PASS dist/smoke.log
+          if grep -Eq 'SCRIPT ERROR|Assertion failed' dist/smoke.log; then exit 1; fi
+
+      - name: Prepare APK signing key
+        shell: bash
+        env:
+          RELEASE_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          RELEASE_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          RELEASE_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          umask 077
+          if [[ -n "$RELEASE_KEYSTORE" ]]; then
+            test -n "$RELEASE_ALIAS"
+            test -n "$RELEASE_PASSWORD"
+            printf '%s' "$RELEASE_KEYSTORE" | base64 --decode > "$RUNNER_TEMP/observer.keystore"
+            key_alias="$RELEASE_ALIAS"
+            key_password="$RELEASE_PASSWORD"
+            echo 'Signing with configured persistent release key.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            key_alias=observer-preview
+            key_password=$(openssl rand -hex 24)
+            echo "::add-mask::$key_password"
+            export OBSERVER_GENERATED_PASSWORD="$key_password"
+            keytool -genkeypair -noprompt -keystore "$RUNNER_TEMP/observer.keystore" -storetype JKS -alias "$key_alias" -keyalg RSA -keysize 3072 -validity 10000 -dname 'CN=Grim Observer Preview' -storepass:env OBSERVER_GENERATED_PASSWORD -keypass:env OBSERVER_GENERATED_PASSWORD
+            echo 'Preview APK: signed with a temporary key unique to this run. A later preview requires uninstalling the previous preview first, losing its settings. The original ro.w40k.sim application is separate. Configure release signing secrets for upgradeable builds.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          {
+            echo "OBSERVER_KEYSTORE=$RUNNER_TEMP/observer.keystore"
+            echo "OBSERVER_KEY_ALIAS=$key_alias"
+            echo "OBSERVER_KEY_PASSWORD=$key_password"
+          } >> "$GITHUB_ENV"
+
+      - name: Build and validate signed APK
+        shell: bash
+        run: bash build_android.sh
+
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: GrimObserver-Android-APK
+          path: |
+            dist/GrimObserver-0.1.0.apk
+            dist/GrimObserver-0.1.0.apk.sha256
+            dist/signature.txt
+            dist/alignment.txt
+            dist/package.txt
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-build-diagnostics
+          path: dist/*.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Remove temporary signing key
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/observer.keystore"
