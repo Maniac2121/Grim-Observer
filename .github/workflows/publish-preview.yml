@@ -1,0 +1,34 @@
+name: Publish installable preview
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publish-preview.yml']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Download verified APK from successful build
+        uses: actions/download-artifact@v4
+        with:
+          name: GrimObserver-Android-APK
+          path: package
+          github-token: ${{ github.token }}
+          repository: Maniac2121/Grim-Observer
+          run-id: 38689973233
+      - name: Verify and publish direct APK download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: Maniac2121/Grim-Observer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp package/* dist/
+          sha256sum --check dist/GrimObserver-0.1.0.apk.sha256
+          printf '%s\n' 'Prototip Observer 3D pentru Android ARM64. APK semnat și verificat în GitHub Actions; instalarea pe S22 Ultra nu a fost verificată. Pachet separat: ro.grimobserver.standalone20261015. Modele procedurale stilizate.' > notes.txt
+          gh release create v0.1.0-preview dist/GrimObserver-0.1.0.apk dist/GrimObserver-0.1.0.apk.sha256 dist/signature.txt dist/package.txt --target 4b5055129fdd4a6aa2d435dc6d2bd101fb24b0d0 --title 'Grim Observer — Android preview 0.1.0' --notes-file notes.txt --prerelease
