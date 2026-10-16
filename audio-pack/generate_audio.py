@@ -144,6 +144,10 @@ def loop_join(x,seconds=.08):
     k=min(round(seconds*SR),len(x)//5)
     w=np.linspace(0,1,k)
     y=x[:-k].copy();y[:k]=x[-k:]*(1-w)+x[:k]*w
+    edge=min(128,len(y)//4)
+    delta=y[-1]-y[0]
+    y[:edge]+=delta*np.linspace(1,0,edge)*.5
+    y[-edge:]-=delta*np.linspace(0,1,edge)*.5
     return y
 
 def aircraft(kind):
