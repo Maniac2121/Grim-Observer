@@ -35,4 +35,4 @@ jobs:
           cd audio-pack/delivery
           sha256sum --check SHA256SUMS.txt
           printf '%s\n' '303 original synthesized sound effects and non-verbal reactions, plus seven original electronic/cinematic battle music loops (8m25s total). Designed from a static inventory of the updated WebView/Three.js APK. Includes integration mapping for Claude, WAV/OGG/MP3 files and validation reports. No audio copied from the APK. Synthetic voices, not actors. No game files or APK modified; in-game listening and phone tests remain to be done.' > "$RUNNER_TEMP/audio-release-notes.md"
-          gh release create audio-v1.0.0 ./*.zip ./*.mp3 CLAUDE_INTEGRATION_RO.md SHA256SUMS.txt --target "$GITHUB_SHA" --title 'Original battle audio pack — 303 SFX + 7 music tracks' --notes-file "$RUNNER_TEMP/audio-release-notes.md" --prerelease
+          gh release create audio-v1.0.1 ./*.zip ./*.mp3 CLAUDE_INTEGRATION_RO.md SHA256SUMS.txt --target "$GITHUB_SHA" --title 'Original battle audio pack — 303 SFX + 7 music tracks' --notes-file "$RUNNER_TEMP/audio-release-notes.md" --prerelease

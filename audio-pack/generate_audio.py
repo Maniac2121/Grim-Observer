@@ -208,12 +208,12 @@ def misc(kind):
     if kind=='whistle':
         d=1.5;t=tvec(d);return fade((tone(d,1700,440,0)*.25+noise(d,800,2500)*.4)*np.sin(np.pi*t/d),.05,.08)
     if kind in ('horn','titan_horn'):
-        d=3.4;t=tvec(d);x=np.zeros(len(t));base=49 if kind=='titan_horn' else 73.416
+        d=3.4;t=tvec(d);x=np.zeros(len(t));base=(49 if kind=='titan_horn' else 73.416)*RNG.uniform(.965,1.035)
         for f in [base,base*1.498,base*2]:
             for h in range(1,12):x+=np.sin(TAU*f*h*t+.01*np.sin(TAU*4*t))/(h**1.5)*.25
         return fade(filt(x,None,2000),.3,.65)
     if kind=='siren':
-        d=4;t=tvec(d);fs=390+130*np.sin(TAU*.6*t);return fade(np.sin(TAU*np.cumsum(fs)/SR)*.6,.1,.2)
+        d=4;t=tvec(d);fs=RNG.uniform(370,410)+RNG.uniform(115,145)*np.sin(TAU*RNG.uniform(.54,.66)*t);return fade(np.sin(TAU*np.cumsum(fs)/SR)*.6,.1,.2)
     if kind in ('roar','waaagh'):return vocal('beast' if kind=='roar' else 'ork',True)
     if kind=='scream':return vocal('sisters',True)
     if kind in ('thunder','collapse'):return explosion(3.0 if kind=='thunder' else 2.0)
@@ -409,6 +409,7 @@ def package_and_validate(tracks):
         a['sha256']=hashlib.sha256((OUT/a['path']).read_bytes()).hexdigest()
         report.append({k:a[k] for k in ['id','duration_seconds','ogg_decoded_frames','ogg_boundary_delta','wav_boundary_delta']})
     if errors:raise RuntimeError(errors)
+    assert len({a['sha256'] for a in BANK}) == len(BANK), 'Duplicate SFX variant'
     manifest={'version':'1.0','source':'Original offline synthesis; no audio extracted from APK','sound_effects':BANK,'music':tracks}
     (OUT/'audio_manifest.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False))
     (OUT/'validation.json').write_text(json.dumps({'checks':'WAV headers, mono/stereo, finite data, no digital clipping, non-silent SFX, loop boundaries, OGG decoded length, SHA256','sfx_files':len(BANK),'music_tracks':len(tracks),'music':report,'limitations':'No real-device listening or integration verification; synthetic vocalizations are not actor performances.'},indent=2))
