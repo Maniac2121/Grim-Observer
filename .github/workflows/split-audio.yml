@@ -1,0 +1,57 @@
+name: Split audio pack for uploads under 30 MB
+on:
+  workflow_dispatch:
+  push:
+    branches: [audio-pack-20261016]
+    paths: ['.github/workflows/split-audio.yml']
+permissions:
+  contents: write
+jobs:
+  split:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Download existing verified audio pack
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release download audio-v1.0.1 --pattern GrimObserver_SFX_303.zip --dir source
+      - name: Split without changing sound files
+        shell: python
+        run: |
+          import zipfile, pathlib, hashlib, json
+          src=pathlib.Path('source/GrimObserver_SFX_303.zip')
+          out=pathlib.Path('split'); out.mkdir()
+          groups={
+            'GrimObserver_SFX_1_Weapons_Melee_Voices.zip': {'weapons','melee','reactions'},
+            'GrimObserver_SFX_2_Vehicles_Explosions_Loops.zip': {'events','vehicles','loops'}
+          }
+          with zipfile.ZipFile(src) as original:
+              assert original.testzip() is None
+              manifest=json.loads(original.read('audio_manifest.json'))
+              wavs={a['path']:a['sha256'] for a in manifest['sound_effects']}
+              assert len(wavs)==303
+              covered=set()
+              for name,categories in groups.items():
+                  with zipfile.ZipFile(out/name,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
+                      for path in original.namelist():
+                          if path.endswith('/'): continue
+                          if not path.startswith('sfx/') or path.split('/')[1] in categories:
+                              data=original.read(path)
+                              if path in wavs:
+                                  assert hashlib.sha256(data).hexdigest()==wavs[path]
+                                  assert path not in covered
+                                  covered.add(path)
+                              z.writestr(path,data)
+                      z.writestr('READ_FIRST_SPLIT.txt','Extract both SFX ZIPs and GrimObserver_BattleMusic_7.zip into the same folder. Each ZIP is independent; no multipart ZIP utility is required. Read CLAUDE_INTEGRATION_RO.md. This is the original synthesized audio pack, not a new lore-accuracy revision.')
+                  assert (out/name).stat().st_size < 30000000
+                  with zipfile.ZipFile(out/name) as check: assert check.testzip() is None
+                  print(name, (out/name).stat().st_size)
+              assert covered==set(wavs)
+          (out/'SPLIT_SHA256SUMS.txt').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.glob('*.zip'))))
+      - name: Publish smaller downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release upload audio-v1.0.1 split/*.zip split/SPLIT_SHA256SUMS.txt
