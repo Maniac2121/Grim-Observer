@@ -1,0 +1,419 @@
+{
+  "apk": "W40K-TotalWar.apk uploaded 2026-10-16",
+  "implementation": "Android WebView + assets/index.html + Three.js",
+  "weapons": {
+    "bolter": {
+      "name": "Boltgun",
+      "legacy_sfx": "bolt"
+    },
+    "bpistol": {
+      "name": "Bolt pistol",
+      "legacy_sfx": "bolt"
+    },
+    "hbolter": {
+      "name": "Heavy bolter",
+      "legacy_sfx": "hbolt"
+    },
+    "plasma": {
+      "name": "Plasma gun",
+      "legacy_sfx": "plasma"
+    },
+    "lascannon": {
+      "name": "Lascannon",
+      "legacy_sfx": "lasc"
+    },
+    "missile": {
+      "name": "Missile launcher",
+      "legacy_sfx": "rocket"
+    },
+    "flamer": {
+      "name": "Flamer",
+      "legacy_sfx": "flame"
+    },
+    "melta": {
+      "name": "Meltagun",
+      "legacy_sfx": "melta"
+    },
+    "lasgun": {
+      "name": "Lasgun",
+      "legacy_sfx": "las"
+    },
+    "laspistol": {
+      "name": "Laspistol",
+      "legacy_sfx": "las"
+    },
+    "autogun": {
+      "name": "Autogun",
+      "legacy_sfx": "auto"
+    },
+    "slugga": {
+      "name": "Slugga",
+      "legacy_sfx": "slug"
+    },
+    "shoota": {
+      "name": "Shoota",
+      "legacy_sfx": "shoota"
+    },
+    "rokkit": {
+      "name": "Rokkit launcha",
+      "legacy_sfx": "rocket"
+    },
+    "burna": {
+      "name": "Burna",
+      "legacy_sfx": "flame"
+    },
+    "gauss": {
+      "name": "Gauss flayer",
+      "legacy_sfx": "gauss"
+    },
+    "gblaster": {
+      "name": "Gauss blaster",
+      "legacy_sfx": "gauss"
+    },
+    "stafflight": {
+      "name": "Staff of light",
+      "legacy_sfx": "gauss"
+    },
+    "fleshborer": {
+      "name": "Fleshborer",
+      "legacy_sfx": "organic"
+    },
+    "deathspit": {
+      "name": "Deathspitter",
+      "legacy_sfx": "organic"
+    },
+    "shuriken": {
+      "name": "Shuriken catapult",
+      "legacy_sfx": "shur"
+    },
+    "reaper": {
+      "name": "Reaper launcher",
+      "legacy_sfx": "rocket"
+    },
+    "pulse": {
+      "name": "Pulse rifle",
+      "legacy_sfx": "pulse"
+    },
+    "splinter": {
+      "name": "Splinter rifle",
+      "legacy_sfx": "splint"
+    },
+    "darklance": {
+      "name": "Dark lance",
+      "legacy_sfx": "lasc"
+    },
+    "radium": {
+      "name": "Radium carbine",
+      "legacy_sfx": "las"
+    },
+    "arcrifle": {
+      "name": "Arc rifle",
+      "legacy_sfx": "plasma"
+    },
+    "ion": {
+      "name": "Ion blaster",
+      "legacy_sfx": "pulse"
+    },
+    "infernobolt": {
+      "name": "Inferno boltgun",
+      "legacy_sfx": "bolt"
+    },
+    "sonic": {
+      "name": "Sonic blaster",
+      "legacy_sfx": "sonic"
+    },
+    "plaguebolt": {
+      "name": "Plague boltgun",
+      "legacy_sfx": "bolt"
+    },
+    "warpfire": {
+      "name": "Warpflame",
+      "legacy_sfx": "plasma"
+    },
+    "spearbolt": {
+      "name": "Guardian spear",
+      "legacy_sfx": "bolt"
+    },
+    "cannon": {
+      "name": "Battle cannon",
+      "legacy_sfx": "cannon"
+    },
+    "railgun": {
+      "name": "Railgun",
+      "legacy_sfx": "rail"
+    },
+    "doomsday": {
+      "name": "Doomsday cannon",
+      "legacy_sfx": "lasc"
+    },
+    "kannon": {
+      "name": "Kannon",
+      "legacy_sfx": "cannon"
+    },
+    "pulsar": {
+      "name": "Bright lance",
+      "legacy_sfx": "lasc"
+    },
+    "bioplasma": {
+      "name": "Bio-plasma",
+      "legacy_sfx": "plasma"
+    },
+    "twinlas": {
+      "name": "Twin lascannon",
+      "legacy_sfx": "lasc"
+    },
+    "sniper": {
+      "name": "Sniper rifle",
+      "legacy_sfx": "las"
+    },
+    "hellgun": {
+      "name": "Hellgun",
+      "legacy_sfx": "las"
+    },
+    "ripper": {
+      "name": "Ripper gun",
+      "legacy_sfx": "shoota"
+    },
+    "burst": {
+      "name": "Burst cannon",
+      "legacy_sfx": "pulse"
+    },
+    "assault": {
+      "name": "Assault cannon",
+      "legacy_sfx": "hbolt"
+    },
+    "stubber": {
+      "name": "Heavy stubber",
+      "legacy_sfx": "auto"
+    },
+    "vhb": {
+      "name": "Heavy bolter (mass-reactive)",
+      "legacy_sfx": "hbolt"
+    },
+    "pcannon": {
+      "name": "Predator autocannon",
+      "legacy_sfx": "cannon"
+    },
+    "dcannon": {
+      "name": "Dreadnought assault cannon",
+      "legacy_sfx": "hbolt"
+    },
+    "dmissile": {
+      "name": "Dreadnought missile launcher",
+      "legacy_sfx": "rocket"
+    }
+  },
+  "literal_sfx_calls": [
+    "bigboom",
+    "bolt",
+    "chain",
+    "clang",
+    "collapse",
+    "flame",
+    "gauss",
+    "hbolt",
+    "hit",
+    "horn",
+    "jet",
+    "pop",
+    "power",
+    "rail",
+    "roar",
+    "scream",
+    "sonic",
+    "thunder",
+    "waaagh",
+    "whistle"
+  ],
+  "factions": [
+    {
+      "id": "ultramarines",
+      "name": "Ultramarines"
+    },
+    {
+      "id": "bloodravens",
+      "name": "Blood Ravens"
+    },
+    {
+      "id": "darkangels",
+      "name": "Dark Angels"
+    },
+    {
+      "id": "bloodangels",
+      "name": "Blood Angels"
+    },
+    {
+      "id": "salamanders",
+      "name": "Salamanders"
+    },
+    {
+      "id": "spacewolves",
+      "name": "Space Wolves"
+    },
+    {
+      "id": "imperialfists",
+      "name": "Imperial Fists"
+    },
+    {
+      "id": "blacktemplars",
+      "name": "Black Templars"
+    },
+    {
+      "id": "ravenguard",
+      "name": "Raven Guard"
+    },
+    {
+      "id": "ironhands",
+      "name": "Iron Hands"
+    },
+    {
+      "id": "krieg",
+      "name": "Imperial Guard – Death Korps of Krieg"
+    },
+    {
+      "id": "catachan",
+      "name": "Imperial Guard – Catachan"
+    },
+    {
+      "id": "custodes",
+      "name": "Adeptus Custodes"
+    },
+    {
+      "id": "guard",
+      "name": "Imperial Guard – Cadia"
+    },
+    {
+      "id": "sororitas",
+      "name": "Adepta Sororitas"
+    },
+    {
+      "id": "mechanicus",
+      "name": "Adeptus Mechanicus"
+    },
+    {
+      "id": "csm",
+      "name": "Chaos Space Marines"
+    },
+    {
+      "id": "blacklegion",
+      "name": "Black Legion"
+    },
+    {
+      "id": "deathguard",
+      "name": "Death Guard"
+    },
+    {
+      "id": "worldeaters",
+      "name": "World Eaters"
+    },
+    {
+      "id": "thousandsons",
+      "name": "Thousand Sons"
+    },
+    {
+      "id": "daemons",
+      "name": "Chaos Daemons"
+    },
+    {
+      "id": "orks",
+      "name": "Orks"
+    },
+    {
+      "id": "necrons",
+      "name": "Necrons"
+    },
+    {
+      "id": "tyranids",
+      "name": "Tyranids"
+    },
+    {
+      "id": "aeldari",
+      "name": "Aeldari"
+    },
+    {
+      "id": "drukhari",
+      "name": "Drukhari"
+    },
+    {
+      "id": "votann",
+      "name": "Leagues of Votann"
+    },
+    {
+      "id": "gsc",
+      "name": "Genestealer Cults"
+    },
+    {
+      "id": "cadianmask",
+      "name": "Imperial Guard – Cadia (Masked Shock Troopers)"
+    },
+    {
+      "id": "whitescars",
+      "name": "White Scars"
+    },
+    {
+      "id": "greyknights",
+      "name": "Grey Knights"
+    },
+    {
+      "id": "deathwatch",
+      "name": "Deathwatch"
+    },
+    {
+      "id": "ironwarriors",
+      "name": "Iron Warriors"
+    },
+    {
+      "id": "nightlords",
+      "name": "Night Lords"
+    },
+    {
+      "id": "wordbearers",
+      "name": "Word Bearers"
+    },
+    {
+      "id": "alphalegion",
+      "name": "Alpha Legion"
+    },
+    {
+      "id": "sonsofhorus",
+      "name": "Sons of Horus (Horus Heresy)"
+    },
+    {
+      "id": "khornedaemons",
+      "name": "Daemons of Khorne"
+    },
+    {
+      "id": "nurgledaemons",
+      "name": "Daemons of Nurgle"
+    },
+    {
+      "id": "tzeentchdaemons",
+      "name": "Daemons of Tzeentch"
+    },
+    {
+      "id": "slaaneshdaemons",
+      "name": "Daemons of Slaanesh"
+    },
+    {
+      "id": "inquisition",
+      "name": "The Inquisition"
+    },
+    {
+      "id": "redcorsairs",
+      "name": "Red Corsairs"
+    },
+    {
+      "id": "lostdamned",
+      "name": "The Lost and the Damned"
+    },
+    {
+      "id": "harlequins",
+      "name": "Harlequins"
+    },
+    {
+      "id": "kroot",
+      "name": "Kroot Mercenaries"
+    }
+  ],
+  "notes": "Static inspection only; APK has not been executed or modified. Only declared ranged weapon entries and direct sfx literals inventoried, not proof of runtime reachability."
+}

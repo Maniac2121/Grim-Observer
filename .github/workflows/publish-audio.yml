@@ -1,0 +1,36 @@
+name: Build original audio pack
+on:
+  workflow_dispatch:
+  push:
+    branches: [audio-pack-20261016]
+    paths: ['audio-pack/**', '.github/workflows/publish-audio.yml']
+permissions:
+  contents: write
+jobs:
+  audio:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install audio dependencies
+        run: |
+          python -m pip install 'numpy==2.3.5' 'scipy==1.17.0'
+          command -v ffmpeg
+      - name: Generate original audio and validate
+        run: |
+          python audio-pack/generate_audio.py
+          node --check audio-pack/web_audio_loader.js
+          python audio-pack/finalize_pack.py
+      - name: Publish downloadable audio files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          cd audio-pack/delivery
+          sha256sum --check SHA256SUMS.txt
+          printf '%s\n' '303 original synthesized sound effects and non-verbal reactions, plus seven original electronic/cinematic battle music loops (8m25s total). Designed from a static inventory of the updated WebView/Three.js APK. Includes integration mapping for Claude, WAV/OGG/MP3 files and validation reports. No audio copied from the APK. Synthetic voices, not actors. No game files or APK modified; in-game listening and phone tests remain to be done.' > "$RUNNER_TEMP/audio-release-notes.md"
+          gh release create audio-v1.0.0 ./*.zip ./*.mp3 CLAUDE_INTEGRATION_RO.md SHA256SUMS.txt --target "$GITHUB_SHA" --title 'Original battle audio pack — 303 SFX + 7 music tracks' --notes-file "$RUNNER_TEMP/audio-release-notes.md" --prerelease
